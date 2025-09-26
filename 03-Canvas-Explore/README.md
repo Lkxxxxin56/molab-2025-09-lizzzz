@@ -1,4 +1,5 @@
-# [03-Canvas-Explore](https://github.com/molab-itp/03-Canvas-Explore)
+# [Week03-SwiftUI](https://www.notion.so/Week03-SwiftUI-27994419378d8086993ee110cd69edb0)
 
-- explore SwiftUI Canvas and TimelineView for computed graphic animation
+This project is a text-art sketch of Washington Square Park, drawn entirely in Swift (for the 1st time YAH) using loops, variables, and functions.
+
 
