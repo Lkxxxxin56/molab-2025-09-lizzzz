@@ -8,11 +8,11 @@ func load(_ file :String) -> String {
 
 // 1. Ask the user for their name
 // print("What is your name?")
-let name = "Lisa"
+let name = "Mai"
 
 // 2. Ask for a favorite holiday
 // print("What is your favorite holiday? (Christams/ Halloween / Thanksgiving)")
-let holiday = "thanksgiving"
+let holiday = "halloween"
 
 // 3. Match and print
 switch holiday {
@@ -23,7 +23,7 @@ case "thanksgiving":
     print(load("turkey.txt"))
     print("Happy Thanksgiving, \(name)!")
 case "halloween":
-    print(load("pumpkin.txt"))
+    print(load("ghost.txt"))
     print("Happy Halloween, \(name)!")
 default:
     print("Hmm, I don't know that holiday… but Happy Holidays, \(name)!")
