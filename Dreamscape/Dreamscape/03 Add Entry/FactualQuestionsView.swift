@@ -8,28 +8,28 @@
 import SwiftUI
 
 struct FactualQuestionsView: View {
-    @State private var dreamDate: Date = Date()
-    @State private var isNightmare: Bool = false
-    @State private var wokeYouUp: Bool = false
-    @State private var clarity: Double = 0.5 // 0 = blurry, 1 = vivid
-    @State private var intensity: Double = 0.5 // 0 = low intensity, 1 = high intensity
-
+//    @State private var dreamDate: Date = Date()
+//    @State private var isNightmare: Bool = false
+//    @State private var wokeYouUp: Bool = false
+//    @State private var clarity: Double = 0.5
+//    @State private var intensity: Double = 0.5
+    @ObservedObject var draft: DreamDraft
     
     var body: some View {
         Form {
             // Q1: Dream date
             Section(header: Text("Dream Date")) {
                 DatePicker("When did you have this dream?",
-                           selection: $dreamDate,
+                           selection: $draft.dreamDate,
                            displayedComponents: .date)
             }
             
             Section(header: Text("Factual Details")) {
                 // Q2: Nightmare yes/no
-                Toggle("Was it a nightmare?", isOn: $isNightmare)
+                Toggle("Was it a nightmare?", isOn: $draft.isNightmare)
                 
                 // Q3: Wake up yes/no
-                Toggle("Did it wake you up from sleep?", isOn: $wokeYouUp)
+                Toggle("Did it wake you up from sleep?", isOn: $draft.wokeYouUp)
                 
                 // Q4: Memory clarity slider
                 VStack(alignment: .leading, spacing: 8) {
@@ -40,7 +40,7 @@ struct FactualQuestionsView: View {
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
-                    Slider(value: $clarity, in: 0...1)
+                    Slider(value: $draft.clarity, in: 0...1)
                     HStack {
                         Text("Blurry")
                             .font(.caption)
@@ -62,7 +62,7 @@ struct FactualQuestionsView: View {
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
-                    Slider(value: $clarity, in: 0...1)
+                    Slider(value: $draft.clarity, in: 0...1)
                     HStack {
                         Text("Calm")
                             .font(.caption)
@@ -91,7 +91,7 @@ struct FactualQuestionsView: View {
     }
     
     private var clarityLabel: String {
-        switch clarity {
+        switch draft.clarity {
         case 0..<0.25:
             return "Very blurry"
         case 0.25..<0.5:
@@ -104,7 +104,7 @@ struct FactualQuestionsView: View {
     }
     
     private var intensityLabel: String {
-        switch clarity {
+        switch draft.clarity {
         case 0..<0.25:
             return "Very intense"
         case 0.25..<0.5:
@@ -119,7 +119,7 @@ struct FactualQuestionsView: View {
 
 #Preview {
     NavigationStack {
-        FactualQuestionsView()
+        FactualQuestionsView(draft: DreamDraft())
     }
 }
 

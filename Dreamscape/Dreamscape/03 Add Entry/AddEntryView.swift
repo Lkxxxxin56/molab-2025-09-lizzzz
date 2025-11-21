@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct AddEntryView: View {
-    @State private var dreamText: String = ""
+    // @State private var dreamText: String = ""
+    @StateObject private var draft = DreamDraft()
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -21,7 +22,7 @@ struct AddEntryView: View {
                 .font(.subheadline)
                 .foregroundColor(.secondary)
             
-            TextEditor(text: $dreamText)
+            TextEditor(text: $draft.text)
                 .frame(minHeight: 200)
                 .padding(8)
                 .overlay(
@@ -31,7 +32,7 @@ struct AddEntryView: View {
                 .scrollContentBackground(.hidden)
             
             // Character count (optional, but nice)
-            Text("\(dreamText.count) characters")
+            Text("\(draft.text.count) characters")
                 .font(.caption)
                 .foregroundColor(.secondary)
             
@@ -39,18 +40,18 @@ struct AddEntryView: View {
             
             // NavigationLink to next step (Factual Questions)
             NavigationLink {
-                FactualQuestionsView()
+                FactualQuestionsView(draft: draft)
             } label: {
                 Text("Next")
                     .frame(maxWidth: .infinity)
                     .padding()
                     .bold()
-                    .background(dreamText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Color.gray.opacity(0.4) : Color.blue)
+                    .background(draft.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Color.gray.opacity(0.4) : Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(12)
             }
             // disable when no text input
-            .disabled(dreamText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            .disabled(draft.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
         .padding()
         .navigationTitle("New Dream Entry")

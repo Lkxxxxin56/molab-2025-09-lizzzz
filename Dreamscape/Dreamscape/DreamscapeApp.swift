@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct DreamscapeApp: App {
+    @StateObject private var dreamStore = DreamStore()
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(dreamStore)
         }
     }
 }
