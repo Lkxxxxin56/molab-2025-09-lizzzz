@@ -16,8 +16,8 @@ struct SettingsView: View {
             }
             
             Section(header: Text("App Settings")) {
-                Text("Appearance")
-                Text("Backup & Sync (future Firebase)")
+                Text("Appearance (coming soon)")
+                Text("Backup & Sync (coming soon)")
             }
         }
         .navigationTitle("Settings")
