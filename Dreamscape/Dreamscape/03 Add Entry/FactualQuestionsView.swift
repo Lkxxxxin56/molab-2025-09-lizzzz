@@ -78,11 +78,15 @@ struct FactualQuestionsView: View {
             
             Section {
                 NavigationLink {
-                    EmotionalQuestionsView()
+                    EmotionalQuestionsView(draft: draft)
                 } label: {
-                    Text("Next: Feelings & Atmosphere")
+                    Text("Next")
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 4)
+                        .padding()
+                        .bold()
+                        .background(Color.accentColor)
+                        .foregroundColor(.white)
+                        .cornerRadius(12)
                 }
             }
         }

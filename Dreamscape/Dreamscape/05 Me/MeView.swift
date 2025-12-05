@@ -13,7 +13,7 @@ struct MeView: View {
     var body: some View {
         NavigationStack {
             List {
-                // MARK: - Profile Header
+                // Profile Header
                 Section {
                     HStack(spacing: 16) {
                         ZStack {
@@ -42,19 +42,19 @@ struct MeView: View {
                     .padding(.vertical, 8)
                 }
                 
-                // MARK: - Vertical Menu
+                // Vertical Menu
                 Section {
                     NavigationLink {
-                        DiaryView()
+                        DiaryArchiveView()
                     } label: {
                         Label("My Dream Diary", systemImage: "book.closed.fill")
                     }
                     
-//                    NavigationLink {
-//                        InsightsView()
-//                    } label: {
-//                        Label("Dream Insights", systemImage: "chart.bar.xaxis")
-//                    }
+                    NavigationLink {
+                        InsightsView()
+                    } label: {
+                        Label("Dream Insights", systemImage: "chart.bar.xaxis")
+                    }
                     
                     NavigationLink {
                         SettingsView()

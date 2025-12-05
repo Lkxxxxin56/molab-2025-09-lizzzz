@@ -8,10 +8,41 @@
 import SwiftUI
 
 struct LibraryView: View {
+    private let categories = MotifCategory.sampleData
+
     var body: some View {
-        Text("Library – motifs & symbols coming soon")
-            .padding()
-            .navigationTitle("Library")
+        NavigationStack {
+            List {
+                ForEach(categories) { category in
+                    Section(header: Text(category.name)) {
+                        ForEach(category.motifs) { motif in
+                            NavigationLink {
+                                MotifDetailView(motif: motif)
+                            } label: {
+                                HStack(spacing: 12) {
+                                    Image(systemName: motif.icon)
+                                        .font(.title3)
+                                        .foregroundColor(.accentColor)
+                                        .frame(width: 30)
+
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(motif.name)
+                                            .font(.subheadline)
+                                            .bold()
+                                        Text(motif.shortMeaning)
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
+                                .padding(.vertical, 4)
+
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Dream Library")
+        }
     }
 }
 

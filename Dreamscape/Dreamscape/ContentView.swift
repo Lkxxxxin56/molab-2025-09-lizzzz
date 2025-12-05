@@ -44,7 +44,6 @@ struct ContentView: View {
             .tabItem {
                 Label("Me", systemImage: "person.crop.circle")
             }
-
         }
         .padding()
     }

@@ -8,10 +8,7 @@
 import SwiftUI
 
 struct EmotionalQuestionsView: View {
-//    @State private var emotionsDuring: Set<String> = [] // use set instead of an array bc it has no duplicate elements and is faster for access
-//    @State private var emotionsAfter: Set<String> = []
-//    @State private var selectedAtmosphere: String = ""
-    @ObservedObject var draft = DreamDraft()
+    @ObservedObject var draft: DreamDraft
     
     private let duringOptions = [
         "Confused", "Terrified", "Excited", "Nostalgic",
@@ -28,10 +25,16 @@ struct EmotionalQuestionsView: View {
         "Floating", "Confined", "Airy", "Neon"
     ]
     
+    // ✅ Validation: must pick at least one emotion in each category
+    private var canFinish: Bool {
+        !draft.emotionsDuring.isEmpty &&
+        !draft.emotionsAfter.isEmpty &&
+        !draft.atmosphere.isEmpty
+    }
+    
     var body: some View {
-        Text("Emotional Questions View")
         Form {
-            // Q1: Emotions during the dream
+            // Emotions during the dream
             Section(header: Text("Emotions during the dream")) {
                 ForEach(duringOptions, id: \.self) { emotion in
                     MultipleSelectionRow(
@@ -43,10 +46,9 @@ struct EmotionalQuestionsView: View {
                 }
             }
             
-            // Q2: Emotions after the dream
-            Section(header: Text("Emotions after the dream")) {
-                ForEach(afterOptions, id: \.self) {
-                    emotion in
+            // Emotions upon waking
+            Section(header: Text("Emotions upon waking")) {
+                ForEach(afterOptions, id: \.self) { emotion in
                     MultipleSelectionRow(
                         title: emotion,
                         isSelected: draft.emotionsAfter.contains(emotion)
@@ -56,7 +58,7 @@ struct EmotionalQuestionsView: View {
                 }
             }
             
-            // Q3: Dream atmosphere
+            // Dream atmosphere
             Section(header: Text("Dream atmosphere")) {
                 Picker("Atmosphere", selection: $draft.atmosphere) {
                     ForEach(atmosphereOptions, id: \.self) { option in
@@ -64,20 +66,43 @@ struct EmotionalQuestionsView: View {
                     }
                 }
             }
-
             
+            // Debug (optional): see how many you selected
+            /*
             Section {
+                Text("Selected during: \(draft.emotionsDuring.count)")
+                Text("Selected after: \(draft.emotionsAfter.count)")
+            }
+            */
+            
+            // Finish button + error message
+            Section {
+                if !canFinish {
+                    Text("Please select at least one emotion during the dream and one emotion upon waking.")
+                        .font(.caption)
+                        .foregroundColor(.red)
+                }
+                
                 NavigationLink {
                     SummaryView(draft: draft)
                 } label: {
-                    Text("Get Your Summary")
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 4)
+                    Text("Finish Entry")
+                        .frame(maxWidth: .infinity, alignment: .center)
                 }
+                .disabled(!canFinish)
             }
         }
-        .navigationTitle("Step3: Feelings")
+        .navigationTitle("Step 3: Feelings")
         .navigationBarTitleDisplayMode(.inline)
+    }
+    
+    // Helper to toggle items in a Set
+    private func toggleSelection(_ item: String, in set: inout Set<String>) {
+        if set.contains(item) {
+            set.remove(item)
+        } else {
+            set.insert(item)
+        }
     }
 }
 
@@ -100,15 +125,6 @@ struct MultipleSelectionRow: View {
         }
     }
 }
-
-private func toggleSelection(_ item: String, in set: inout Set<String>) {
-    if set.contains(item) {
-        set.remove(item)
-    } else {
-        set.insert(item)
-    }
-}
-
 
 
 #Preview {

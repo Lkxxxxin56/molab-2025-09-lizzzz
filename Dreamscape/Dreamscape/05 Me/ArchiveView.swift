@@ -1,47 +1,34 @@
 //
-//  SummaryView.swift
+//  ArchivedDetailView.swift
 //  Dreamscape
 //
-//  Created by Kexin Liu on 11/20/25.
+//  Created by Kexin Liu on 12/4/25.
 //
 
 import SwiftUI
 
-struct DreamTypeInfo {
-    let type: String
-    let description: String
-}
-
-
-struct SummaryView: View {
-    @ObservedObject var draft: DreamDraft
-    @EnvironmentObject var dreamStore: DreamStore
-    @Environment(\.dismiss) var dismiss
+struct ArchivedDreamDetailView: View {
+    let entry: DreamEntry
     
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                // 1) Visualization section
                 visualizationSection
                 Divider()
-                // 2) Dream summary section
                 summarySection
                 Divider()
-                // 3) Actions / buttons section
-                actionsSection
+                infoSection
             }
             .padding()
         }
-        .navigationTitle("Dream Summary")
+        .navigationTitle("Saved Dream")
         .navigationBarTitleDisplayMode(.inline)
     }
     
-    // MARK: - 1) Visualization (image placeholder + poem)
+    // MARK: - Visualization (gradient + poem)
     
     private var visualizationSection: some View {
         VStack(alignment: .leading, spacing: 0) {
-
-            // Top: image instead of gradient
             visualizationImage
                 .resizable()
                 .scaledToFill()
@@ -50,11 +37,11 @@ struct SummaryView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 .padding([.top, .horizontal])
 
-            // Bottom: text on white card
+            
             VStack(alignment: .leading, spacing: 8) {
-                Text("Your Dreamscape")
+                Text("Dream Visual")
                     .font(.headline)
-
+                
                 VStack(alignment: .leading, spacing: 4) {
                     ForEach(poemLines, id: \.self) { line in
                         Text(line)
@@ -68,12 +55,11 @@ struct SummaryView: View {
             .padding(.bottom, 16)
         }
         .dreamCardStyle()
-        
         .shadow(radius: 8, y: 4)
     }
     
     private var visualizationImage: Image {
-        switch draft.atmosphere {
+        switch entry.atmosphere {
         case "Warm":
             return Image("warmDream")
         case "Dark":
@@ -88,37 +74,36 @@ struct SummaryView: View {
             return Image("airyDream")
         case "Neon":
             return Image("neonDream")
-        default:
+        default: // "Foggy" or anything else
             return Image("foggyDream")
         }
     }
 
-
-// Original gradient images
-//    private var visualizationGradient: LinearGradient {
-//        switch draft.atmosphere {
-//        case "Warm":
-//            return LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)
-//        case "Dark":
-//            return LinearGradient(colors: [.purple, .black], startPoint: .top, endPoint: .bottom)
-//        case "Surreal":
-//            return LinearGradient(colors: [.purple, .teal], startPoint: .topLeading, endPoint: .bottomTrailing)
-//        case "Floating":
-//            return LinearGradient(colors: [.blue, .cyan], startPoint: .topLeading, endPoint: .bottomTrailing)
-//        case "Confined":
-//            return LinearGradient(colors: [.gray, .purple], startPoint: .topLeading, endPoint: .bottomTrailing)
-//        case "Airy":
-//            return LinearGradient(colors: [.blue, .white], startPoint: .top, endPoint: .bottom)
-//        case "Neon":
-//            return LinearGradient(colors: [.pink, .purple], startPoint: .topLeading, endPoint: .bottomTrailing)
-//        default: // "Foggy" or anything else
-//            return LinearGradient(colors: [.gray, .blue], startPoint: .topLeading, endPoint: .bottomTrailing)
-//        }
-//    }
-//    
+    
+    private var visualizationGradient: LinearGradient {
+        switch entry.atmosphere {
+        case "Warm":
+            return LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)
+        case "Dark":
+            return LinearGradient(colors: [.purple, .black], startPoint: .top, endPoint: .bottom)
+        case "Surreal":
+            return LinearGradient(colors: [.purple, .teal], startPoint: .topLeading, endPoint: .bottomTrailing)
+        case "Floating":
+            return LinearGradient(colors: [.blue, .cyan], startPoint: .topLeading, endPoint: .bottomTrailing)
+        case "Confined":
+            return LinearGradient(colors: [.gray, .purple], startPoint: .topLeading, endPoint: .bottomTrailing)
+        case "Airy":
+            return LinearGradient(colors: [.blue, .white], startPoint: .top, endPoint: .bottom)
+        case "Neon":
+            return LinearGradient(colors: [.pink, .purple], startPoint: .topLeading, endPoint: .bottomTrailing)
+        default: // "Foggy" or anything else
+            return LinearGradient(colors: [.gray, .blue], startPoint: .topLeading, endPoint: .bottomTrailing)
+        }
+    }
+    
     private var poemLines: [String] {
         let emotion = primaryEmotionDuring ?? "a feeling you can’t name"
-        let atmosphere = draft.atmosphere.lowercased()
+        let atmosphere = entry.atmosphere.lowercased()
         
         return [
             "In \(atmosphere) air, your story grew,",
@@ -129,31 +114,13 @@ struct SummaryView: View {
     }
     
     private var primaryEmotionDuring: String? {
-        draft.emotionsDuring.first
+        entry.emotionsDuring.first
     }
     
-    // MARK: - 2) Dream summary (type + motifs)
+    // MARK: - Summary (type + motif insight)
     
     private var summarySection: some View {
         VStack(alignment: .leading, spacing: 12) {
-//            Text("Dream Summary")
-//                .font(.title3)
-//                .bold()
-            
-            // Dream description
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Dream Description")
-                    .font(.subheadline).bold()
-                    .foregroundColor(.secondary)
-                
-                Text(draft.text)
-                    .font(.body)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.leading)
-            }
-            Spacer()
-            
-            // Dream type
             VStack(alignment: .leading, spacing: 6) {
                 Text("Dream Type")
                     .font(.subheadline).bold()
@@ -161,13 +128,12 @@ struct SummaryView: View {
                 
                 Text(dreamTypeInfo.type)
                     .font(.headline)
-
+                
                 Text(dreamTypeInfo.description)
                     .font(.subheadline).italic()
                     .foregroundColor(.secondary)
             }
-            Spacer()
-            // Motif explanation
+            
             VStack(alignment: .leading, spacing: 4) {
                 Text("Motif Insight")
                     .font(.subheadline).bold()
@@ -182,59 +148,52 @@ struct SummaryView: View {
     }
     
     private var dreamTypeInfo: DreamTypeInfo {
-        // 1. Anxiety / Nightmare Dream
-        if draft.isNightmare ||
-            draft.emotionsDuring.contains("Terrified") ||
-            draft.emotionsAfter.contains("Anxious") {
-
+        if entry.isNightmare ||
+            entry.emotionsDuring.contains("Terrified") ||
+            entry.emotionsAfter.contains("Anxious") {
+            
             return DreamTypeInfo(
                 type: "Nightmare / Anxiety Dream",
                 description:
                 "A distressing dream involving fear, pressure, or emotional overload. These dreams often reflect unresolved tension or situations that feel out of control in waking life."
             )
         }
-
-        // 2. Nostalgia / Memory Dream
-        if draft.emotionsDuring.contains("Nostalgic") {
+        
+        if entry.emotionsDuring.contains("Nostalgic") {
             return DreamTypeInfo(
                 type: "Nostalgia Dream",
                 description:
                 "A dream shaped by memory, longing, or emotional reflection. These dreams often revisit people or places tied to your personal history."
             )
         }
-
-        // 3. Symbolic Surreal Dream
-        if draft.atmosphere == "Surreal" || draft.atmosphere == "Neon" {
+        
+        if entry.atmosphere == "Surreal" || entry.atmosphere == "Neon" {
             return DreamTypeInfo(
                 type: "Surreal Symbolic Dream",
                 description:
                 "A dream filled with symbolic or fantastical imagery. These dreams express deeper thoughts or emotions in a poetic, nonlinear way."
             )
         }
-
-        // 4. Adventure / Exploration Dream
-        if draft.emotionsDuring.contains("Excited") || draft.emotionsAfter.contains("Inspired") {
+        
+        if entry.emotionsDuring.contains("Excited") || entry.emotionsAfter.contains("Inspired") {
             return DreamTypeInfo(
                 type: "Exploration Dream",
                 description:
                 "A dream centered on discovery, movement, or possibility. These dreams often reflect curiosity, creativity, or emerging personal growth."
             )
         }
-
-        // 5. Default Reflective Dream
+        
         return DreamTypeInfo(
             type: "Reflective Dream",
             description:
             "A contemplative dream shaped by inner processing and emotional integration. These dreams reflect your current thoughts, moods, and transitions."
         )
     }
-
     
     private var motifInsights: [String] {
         var insights: [String] = []
         
-        // Atmosphere-based
-        switch draft.atmosphere {
+        switch entry.atmosphere {
         case "Foggy":
             insights.append("Foggy dreams can feel like half-remembered thoughts or transitions.")
         case "Warm":
@@ -255,17 +214,16 @@ struct SummaryView: View {
             break
         }
         
-        // Emotional-based
-        if draft.emotionsDuring.contains("Confused") {
+        if entry.emotionsDuring.contains("Confused") {
             insights.append("Feeling confused in dreams can reflect processing something unresolved or complex.")
         }
-        if draft.emotionsDuring.contains("Excited") {
+        if entry.emotionsDuring.contains("Excited") {
             insights.append("Excitement in dreams may point to new desires, curiosity, or emerging possibilities.")
         }
-        if draft.emotionsDuring.contains("Lonely") {
+        if entry.emotionsDuring.contains("Lonely") {
             insights.append("Loneliness in dreams can highlight needs for connection or self-comfort.")
         }
-        if draft.isNightmare {
+        if entry.isNightmare {
             insights.append("Because this felt like a nightmare, your mind might be rehearsing threats in a safe space.")
         }
         
@@ -276,78 +234,85 @@ struct SummaryView: View {
         return insights
     }
     
-    // MARK: - 3) Actions / buttons
     
-    private var actionsSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // Primary action
-            Button {
-                let entry = draft.toEntry()
-                dreamStore.add(entry)
-                dismiss()
-                
-            } label: {
-                Text("Save to Dream Diary")
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .bold()
-                    .background(Color.accentColor)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
-            }
+    // MARK: - Factual info section
+    
+    private var infoSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Details")
+                .font(.headline)
             
-            Button(role: .destructive) {
-                print("Discard tapped")
-            } label: {
-                Text("Discard this entry")
-                    .frame(maxWidth: .infinity)
-            }
-            
-            Divider().padding(.vertical, 4)
-            
-            // Secondary actions row
-            HStack(spacing: 16) {
-                Button {
-                    print("Share tapped")
-                } label: {
-                    VStack {
-                        Image(systemName: "square.and.arrow.up")
-                        Text("Share")
-                            .font(.caption)
-                    }
-                    .frame(maxWidth: .infinity)
+            Group {
+                HStack {
+                    Text("Dream date")
+                    Spacer()
+                    Text(entry.dreamDate, style: .date)
+                        .foregroundColor(.secondary)
                 }
-                
-                Button {
-                    print("Save image tapped")
-                } label: {
-                    VStack {
-                        Image(systemName: "photo")
-                        Text("Save Image")
-                            .font(.caption)
-                    }
-                    .frame(maxWidth: .infinity)
+                HStack {
+                    Text("Nightmare")
+                    Spacer()
+                    Text(entry.isNightmare ? "Yes" : "No")
+                        .foregroundColor(.secondary)
                 }
-                
-                Button {
-                    print("Chat AI tapped")
-                } label: {
-                    VStack {
-                        Image(systemName: "sparkles")
-                        Text("Ask Dream AI")
-                            .font(.caption)
-                    }
-                    .frame(maxWidth: .infinity)
+                HStack {
+                    Text("Woke you up")
+                    Spacer()
+                    Text(entry.wokeYouUp ? "Yes" : "No")
+                        .foregroundColor(.secondary)
+                }
+                HStack {
+                    Text("Clarity")
+                    Spacer()
+                    Text(clarityLabel)
+                        .foregroundColor(.secondary)
+                }
+                HStack(alignment: .top) {
+                    Text("Emotions (during)")
+                    Spacer()
+                    Text(entry.emotionsDuring.joined(separator: ", "))
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.trailing)
+                }
+                HStack(alignment: .top) {
+                    Text("Emotions (on waking)")
+                    Spacer()
+                    Text(entry.emotionsAfter.joined(separator: ", "))
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.trailing)
                 }
             }
-            .foregroundColor(.accentColor)
+            .font(.subheadline)
+        }
+    }
+    
+    private var clarityLabel: String {
+        switch entry.clarity {
+        case 0..<0.33:
+            return "Blurry"
+        case 0.33..<0.66:
+            return "Medium"
+        default:
+            return "Vivid"
         }
     }
 }
 
 #Preview {
     NavigationStack {
-        SummaryView(draft: DreamDraft())
-            .environmentObject(DreamStore())
+        // Dummy entry for preview
+        let entry = DreamEntry(
+            id: UUID(),
+            createdAt: Date(),
+            text: "I was walking through a neon forest and the trees were made of glass.",
+            dreamDate: Date(),
+            isNightmare: false,
+            wokeYouUp: false,
+            clarity: 0.8,
+            emotionsDuring: ["Curious", "Excited"],
+            emotionsAfter: ["Inspired"],
+            atmosphere: "Neon"
+        )
+        ArchivedDreamDetailView(entry: entry)
     }
 }

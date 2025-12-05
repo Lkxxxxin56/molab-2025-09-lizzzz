@@ -11,6 +11,14 @@ struct AddEntryView: View {
     // @State private var dreamText: String = ""
     @StateObject private var draft = DreamDraft()
     
+    private var trimmedText: String {
+        draft.text.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var isNextButtonEnabled: Bool {
+        trimmedText.count >= 30
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             
@@ -39,6 +47,12 @@ struct AddEntryView: View {
             Spacer()
             
             // NavigationLink to next step (Factual Questions)
+            if !isNextButtonEnabled && !trimmedText.isEmpty{
+                Text("Please write at least 30 characters about your dream.")
+                    .font(.caption)
+                    .foregroundColor(.red)
+            }
+            
             NavigationLink {
                 FactualQuestionsView(draft: draft)
             } label: {
@@ -46,12 +60,12 @@ struct AddEntryView: View {
                     .frame(maxWidth: .infinity)
                     .padding()
                     .bold()
-                    .background(draft.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Color.gray.opacity(0.4) : Color.blue)
+                    .background(isNextButtonEnabled ? Color.accentColor : Color.gray.opacity(0.4))
                     .foregroundColor(.white)
                     .cornerRadius(12)
             }
-            // disable when no text input
-            .disabled(draft.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            // disable when no text input and less than 20 ch
+            .disabled(!isNextButtonEnabled)
         }
         .padding()
         .navigationTitle("New Dream Entry")
